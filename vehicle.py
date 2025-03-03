@@ -1,19 +1,24 @@
 #modulo en donde se crea la clase vehiculo------------------------
 
 class Vehicle:
-    def __init__(self, model, brand, year, rate_per_day):
+    def __init__(self, model, brand, year, rate_per_day, vehicle_license_plate):
         self.model = model
         self.brand = brand
         self.year = year
         self.rate_per_day = rate_per_day
         self.vehicle_wear = 0
+        self.possession_days = 0
+        self.booking_cost = 0
+        self.vehicle_license_plate = vehicle_license_plate
         self.in_possession_of = None
         self.damaged_by = None
         self.availability = True
 
-    def __str__(self):
-        return f"{self.brand} {self.model} ({self.year}) - Tarifa: ${self.rate_per_day}/día"
-    
+    def show_info(self):
+        def __str__():
+            return f"{self.brand} {self.model} ({self.year}) placa: {self.vehicle_license_plate} - Tarifa: ${self.rate_per_day}/día"
+        return __str__()
+
     def fix_vehicle(self, vehicle_wear_list):
 
         print("\n--- Menu der reparacion ---")

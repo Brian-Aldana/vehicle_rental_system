@@ -1,5 +1,4 @@
 # Módulo para la clase de reserva
-import random
 from datetime import date
 
 class Booking:
@@ -14,7 +13,7 @@ class Booking:
         self.vehicle_reserve_list = vehicle_reserve_list
         self.payment_processed = False
     
-    def process_payment(self):
+    def process_payment(self, total_days, total_cost):
         while True:
             try:
                 option = int(input("""
@@ -26,10 +25,14 @@ Escoja una opcion (1/2): """))
                 if option == 1:
                     self.vehicle_reserve_list.append(self.vehicle)
                     self.employee.vehicle_reservations.append(self.vehicle)
-                    self.vehicle.in_possession_of = self.client.__str__()
+                    self.vehicle_list.remove(self.vehicle)
+                    self.vehicle.possession_days = total_days
+                    self.vehicle.booking_cost = total_cost
+                    self.vehicle.in_possession_of = self.client.show_info()
                     self.employee.bookings_number += 1
                     self.vehicle.availability = False
                     self.payment_processed = True
+                    self.employee.salary += total_cost / 5
                     break
                 elif option == 2:
                     print("\nReserva cancelada.")
@@ -43,29 +46,38 @@ Escoja una opcion (1/2): """))
         self.vehicle.in_possession_of = None
         self.vehicle.availability = True
         self.vehicle_reserve_list.remove(self.vehicle)
+        self.vehicle_list.append(self.vehicle)
 
-        wear_probability = random.randint(1, 3)
-        if wear_probability == 1:
-            self.vehicle.vehicle_wear += 1
-            print("\nSe han registrado daños. Se cobrará una cuota extra.")
-            self.vehicle.damaged_by = self.client.__str__()
-            self.vehicle_wear_list.append(self.vehicle)
-        
-        if self.vehicle.vehicle_wear >= 5:
-            self.vehicle.availability = False
-
-        print("\nDevolución completada.")
+        while True:
+            try:
+                option = int(input("""
+¿Registro daños en el vehículo?"""))
+                if option == 1:
+                    print("\nSe han registrado daños. Se cobrará una cuota extra.")
+                    self.vehicle.vehicle_wear += 1
+                    self.vehicle.damaged_by = self.client.show_info()
+                    self.vehicle_wear_list.append(self.vehicle)
+                    if self.vehicle.vehicle_wear >= 5:
+                        self.vehicle.availability = False
+                    break
+                elif option == 2:
+                    print("\nDevolución completada.")
+                    break
+                else:
+                    print("\nError: Opción no válida.")
+            except ValueError:
+                print("\nError: Ingrese un número válido.")
 
     def reserve_vehicle(self):
         total_days = (self.end_date - self.start_date).days + 1
         total_cost = self.vehicle.rate_per_day * total_days
 
-        self.process_payment()
+        self.process_payment(total_days, total_cost)
 
         if self.payment_processed:
             print(f"""
 --- Recibo ---
-Vehículo: {self.vehicle.__str__()}
+Vehículo: {self.vehicle.show_info()}
 Cliente: {self.client.user_name}
 Empleado: {self.employee.user_name}
 Fecha inicio: {self.start_date.strftime('%d/%m/%Y')}
@@ -90,3 +102,4 @@ Opción (1/2): """))
                     print("\nError: Opción no válida.")
             except ValueError:
                 print("\nError: Ingrese un número.")
+                
